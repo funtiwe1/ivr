@@ -1,0 +1,9 @@
+FROM node:14
+     RUN mkdir -p /root/ivr
+     WORKDIR /root/ivr
+     ADD . .
+     RUN npm install
+     EXPOSE 80
+     EXPOSE 443
+     EXPOSE 3306
+     CMD ["node","index.js"]
