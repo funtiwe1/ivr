@@ -3,8 +3,8 @@
 
 const client = require('ari-client');
 const fs = require('fs');
-const sleep = require('./utils.js').sleep
-const Log = require('./utils.js').Log
+const sleep = require('@funtiwe/utils').sleep
+const Log = require('@funtiwe/utils').Log
 //const IVR = require('./ivr.js').IVR
 const IVR = require('./ivr.js').IVR
 

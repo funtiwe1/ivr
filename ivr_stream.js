@@ -1,5 +1,5 @@
 'use strict'
-const Log = require('./utils.js').Log
+const Log = require('@funtiwe/utils').Log
 const b24 = require('./bitrix.js')
 const speech = require('./speech.js')
 const fs = require('fs')

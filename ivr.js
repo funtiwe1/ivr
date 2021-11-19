@@ -1,10 +1,10 @@
 'use strict'
-const Log = require('./utils.js').Log
+const Log = require('@funtiwe/utils').Log
 const b24 = require('./bitrix.js')
 const speech = require('./speech.js')
 const fs = require('fs')
-const speech_g = require('@google-cloud/speech');
-const udpserver = require('./udpserver')
+const speech_g = require('@google-cloud/speech')
+const udpserver = require('@funtiwe/udpserver')
 
 
 

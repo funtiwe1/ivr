@@ -5,7 +5,7 @@ const speech = require('@google-cloud/speech');
 const speechtts = require('@google-cloud/text-to-speech');
 const util = require('util');
 const fs = require('fs');
-let getDate = require('./utils.js').getDate
+let getDate = require('@funtiwe/utils').getDate
 
 //const grpc = require('grpc');
 //const protoLoader = require('@grpc/proto-loader');
