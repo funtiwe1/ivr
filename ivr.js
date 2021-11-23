@@ -136,7 +136,7 @@ class IVR {
     let ch = this.ch;
     let ari = this.ari;
     let mode = this.mode;
-    let appname = appname.mode;
+    let appname = this.appname;
     let obj = null;
 
 playback(key,text)
