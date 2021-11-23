@@ -130,7 +130,6 @@ class IVR {
   async makeIVR_stream(key,text) {
     if (!key) return;
 
-    //console.log(this);
     let steps = this.steps;
     let log = this.log;
     let ch = this.ch;
@@ -139,10 +138,15 @@ class IVR {
     let appname = this.appname;
     let obj = null;
 
-playback(key,text)
-.then((d)=>{
-  rec();
-})
+    while(steps[key].next) {
+      await playback(key,text);
+      let text = await record();
+      if (mode == 'repeat') {
+        steps[key].next = 'step1';
+        steps[key].text = text;
+      }
+      key = steps[key].next;
+    }
 
     function playback(key,text) {
       return new Promise(async (res,rej)=>{
@@ -182,9 +186,7 @@ playback(key,text)
       record(ch,obj,key)
       .then((d)=>{
         log.log(d);
-
-        // for repeat
-        playback('step1',d)
+        res();
       })
       .catch((e)=>{
         console.log(e);
@@ -233,61 +235,66 @@ playback(key,text)
       })
     }
 
-    function   record(ch,obj,key) {
+function asr_s(ari,appname,IP_RTPSERVER,port,ch) {
+  let recognizeStream = null;
+  let result = null;
+  let client = new speech_g.SpeechClient();
+  let result_h = null;
+  let usrv = null;
+
+  const encoding = 'LINEAR16';
+  const sampleRateHertz = 16000;
+  const languageCode = 'ru-RU';
+
+  const request = {
+    config: {
+      encoding: encoding,
+      sampleRateHertz: sampleRateHertz,
+      languageCode: languageCode,
+    },
+    interimResults: true, // If you want interim results, set this to true
+  };
+
+  let t = null;
+
+  recognizeStream = client
+  .streamingRecognize(request)
+  .on('error', console.error)
+  .on('data', data => {
+    result = data.results[0].alternatives[0].transcript;
+    console.log('HUMAN: %O\n%O', result,result_h);
+  })
+
+  getRTP(ari,appname,IP_RTPSERVER,port,ch)
+  .then((d)=>{
+    t = setTimeout(()=>{
+      console.log('timer');
+      //usrv.stop();
+      //recognizeStream.end();
+      res(result);
+    },3000);
+    result_h = result;
+    usrv = new udpserver.RtpUdpServerSocket(IP_RTPSERVER + ':' + port,recognizeStream);
+  })
+  .catch((e)=>{
+    log.log('Error');
+  })
+
+  let f_talkfinish = false;
+  let f_talkstart = false;
+
+  ch.on('ChannelTalkingStarted',(ev,ch)=>{
+    if (f_talkstart) return;
+    f_talkstart = true;
+    log.log(key,'Start talk - ChannelTalkingStarted');
+  });
+}
+    function   record(obj,key) {
       return new Promise((res,rej)=>{
         console.log('Started record');
-        let recognizeStream = null;
-        let result = null;
-        let client = new speech_g.SpeechClient();
-        let result_h = null;
-        let usrv = null;
-
-        const encoding = 'LINEAR16';
-        const sampleRateHertz = 16000;
-        const languageCode = 'ru-RU';
-
-        const request = {
-          config: {
-            encoding: encoding,
-            sampleRateHertz: sampleRateHertz,
-            languageCode: languageCode,
-          },
-          interimResults: true, // If you want interim results, set this to true
-        };
-
-        let t = null;
-
-        let port = curport++;
-        recognizeStream = client
-        .streamingRecognize(request)
-        .on('error', console.error)
-        .on('data', data => {
-          result = data.results[0].alternatives[0].transcript;
-          console.log('HUMAN: %O\n%O', result,result_h);
-        })
-
-        getRTP(ari,appname,IP_RTPSERVER,port,ch)
+        asr_s(ari,appname,IP_RTPSERVER,curport++,ch);
         .then((d)=>{
-          t = setTimeout(()=>{
-            console.log('timer');
-            //usrv.stop();
-            recognizeStream.end();
-            playback('step1',result);
-          },3000);
-          result_h = result;
-          usrv = new udpserver.RtpUdpServerSocket(IP_RTPSERVER + ':' + port,recognizeStream);
-        })
-        .catch((e)=>{
-          log.log('Error');
-        })
-
-        let f_talkfinish = false;
-        let f_talkstart = false;
-
-        ch.on('ChannelTalkingStarted',(ev,ch)=>{
-          if (f_talkstart) return;
-          f_talkstart = true;
-          log.log(key,'Start talk - ChannelTalkingStarted');
+          res(d);
         });
       }).catch((e)=>{
         console.log(e);
