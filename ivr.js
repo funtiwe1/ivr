@@ -146,27 +146,27 @@ playback(key,text)
       obj.filename_asr = uniq+'_key_asr';
       let ret = prepare(obj,text)
       .then(async ()=>{
-        log.log(key,'Begin with text: '+obj.text);
-        log.log(key,obj.filename_asr+' '+obj.filename_tts);
+        log.log('Begin with text: '+obj.text);
+        log.log(obj.filename_asr+' '+obj.filename_tts);
         let ret2 = makeTTS(obj,key);
         ret2.then(async ()=>{
-          log.log(key,'Maked TTS audio');
+          log.log('Maked TTS audio');
           play(ch,obj,key)
           .then(async (d)=>{
             console.log('2');
             res();
           }).catch((e)=>{
-            log.log(key,'Error play: '+e.message)
+            log.log('Error play: '+e.message)
             ch.hangup();
             process.exit(1)
           })
         }).catch((e)=>{
-          log.log(key,'Error make TTS: '+e.message)
+          log.log('Error make TTS: '+e.message)
           ch.hangup();
           process.exit(1)
         })
       }).catch((e)=>{
-        log.log(key,'Error prepare: '+e.message)
+        log.log('Error prepare: '+e.message)
         ch.hangup();
         process.exit(1)
       });
@@ -214,11 +214,11 @@ playback(key,text)
         ch.play({media:'recording:'+obj.filename_tts},playback)
         .then(async ()=>{
           playback.on('PlaybackFinished',async ()=>{
-            log.log(key,'Finished play');
+            log.log('Finished play');
             if (!obj.next) await ch.hangup();
             else rec(ch,obj,key);
           });
-          log.log(key,'Started play');
+          log.log('Started play');
         }).catch((e)=>{
           throw new Error(e.message);
         });

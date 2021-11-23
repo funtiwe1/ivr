@@ -44,7 +44,7 @@ client.connect('http:\/\/' + IP_ASTERSERVER +':'+ PORT_ASTERSERVER  ,ARI_USERNAM
 
     let bitrix = false;
     let ivr = new IVR(log,ch,ari,'true',mode,'',bitrix);
-    log.log(ivr);
+    //log.log(ivr);
     ivr.startIVR(s_mode);
 
     ch.once('StasisEnd', function (event, chan) {
