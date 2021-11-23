@@ -272,7 +272,7 @@ playback(key,text)
             if (result==result_h) {
               clearTimeout(t2);
               clearTimeout(t);
-              playback(ch,'step1',result_h);
+              playback('step1',result_h);
 
             }
           },2000);
