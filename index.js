@@ -40,17 +40,17 @@ client.connect('http:\/\/' + IP_ASTERSERVER +':'+ PORT_ASTERSERVER  ,ARI_USERNAM
 
   ari.once('StasisStart', async function (event, ch) {
     let uniq = new Date().getTime();
-    log.log('StasisStart',ch.id);
+    log.log('StasisStart:'+ch.id);
 
     let ivr = new IVR(log,ch,ari,mode);
     ivr.startIVR(s_mode);
 
     ch.once('StasisEnd', function (event, chan) {
-      log.log('StasisEnd',ch.id);
+      log.log('StasisEnd:'+ch.id);
     });
 
     ch.once('ChannelHangupRequest', (e,ch)=>{
-      log.log('ChannelHangupRequest',ch.id);
+      log.log('ChannelHangupRequest:'+ch.id);
       ivr.delete();
     });
 

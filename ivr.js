@@ -35,7 +35,7 @@ class IVR {
       log.log('Prepare: ','Error register');
       ch.hangup();
     }
-    log.log('Prepare: ','Bitrix lead ID: '+res.ID);
+    log.log('Prepare: Bitrix lead ID: '+res.ID);
 
     if (res.CRM_ENTITY_ID) {
       //ret = b24.requestb24('crm.'+strtolow(res.CRM_ENTITY_TYPE)+'.get',{number:number});
@@ -43,8 +43,8 @@ class IVR {
       if (ret) {
         res.NAME = ret.NAME;
         res.SECOND_NAME = ret.SECOND_NAME;
-      } else log.log('Prepare: ','Bitrix lead name: '+res.NAME+' '+res.SECOND_NAME);
-    } else log.log('Prepare: ','Error get crm info');
+      } else log.log('Prepare: Bitrix lead name: '+res.NAME+' '+res.SECOND_NAME);
+    } else log.log('Prepare: Error get crm info');
 
     if (this.demo) this.exampleIVR()
     else this.buildIVR();
