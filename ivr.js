@@ -4,6 +4,8 @@ const speech = require('./speech.js')
 const fs = require('fs')
 const speech_g = require('@google-cloud/speech')
 const udpserver = require('@funtiwe/udpserver')
+const getRTP = require('@funtiwe/utils').getRTP
+
 
 const IP_RTPSERVER = '5.189.230.61';
 const RECOGNIZE_TIME = 3000;
