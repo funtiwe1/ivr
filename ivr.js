@@ -133,7 +133,7 @@ class IVR {
     let mode = this.mode;
     let obj = null;
 
-playback()
+playback(key,text)
 .then((d)=>{
   rec();
 })
