@@ -270,7 +270,7 @@ playback(key,text)
         .then((d)=>{
           t = setTimeout(()=>{
             console.log('timer');
-            usrv.stop();
+            //usrv.stop();
             recognizeStream.end();
             playback('step1',result);
           },3000);
