@@ -121,8 +121,8 @@ class IVR {
     try {
       let audio = speech.tts_f('Меняем режим на '+this.mode,uniq+'_cm.wav');
     } catch (e) {
-      //log.log(e.message);
-      throw new Error(e.message);
+      //log.log(message);
+      throw new Error(message);
     };
     return audio;
   };
@@ -164,17 +164,17 @@ class IVR {
           .then(async (d)=>{
             res();
           }).catch((e)=>{
-            log.log('Error play: '+e.message)
+            log.log('Error play: '+message)
             ch.hangup();
             process.exit(1)
           })
         }).catch((e)=>{
-          log.log('Error make TTS: '+e.message)
+          log.log('Error make TTS: '+message)
           ch.hangup();
           process.exit(1)
         })
       }).catch((e)=>{
-        log.log('Error prepare: '+e.message)
+        log.log('Error prepare: '+message)
         ch.hangup();
         process.exit(1)
       });
@@ -210,8 +210,8 @@ class IVR {
           if (audio) res(audio);
           else rej(new Error('Get empty audio file from TTS'));
         }).catch((e)=>{
-          //throw new Error(e.message);
-          rej(new Error(e.message));
+          //throw new Error(message);
+          rej(new Error(message));
         });
       });
     }
@@ -230,7 +230,7 @@ class IVR {
           });
           log.log('Started play');
         }).catch((e)=>{
-          throw new Error(e.message);
+          throw new Error(message);
         });
       })
     }
