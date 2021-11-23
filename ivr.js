@@ -23,7 +23,7 @@ class IVR {
   bitrix=null;
   patch='\/var/spool\/asterisk\/recording\/';
 
-  constructor(log,ch,ari,demo,mode,greet) {
+  constructor(log,ch,ari,demo,mode,greet,bitrix) {
     if (demo) this.demo = demo;
     if (mode) this.mode = mode;
     if (greet) this.greet = greet;
