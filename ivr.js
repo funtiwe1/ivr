@@ -1,12 +1,9 @@
 'use strict'
-const Log = require('@funtiwe/utils').Log
 const b24 = require('./bitrix.js')
 const speech = require('./speech.js')
 const fs = require('fs')
 const speech_g = require('@google-cloud/speech')
 const udpserver = require('@funtiwe/udpserver')
-
-
 
 const IP_RTPSERVER = '5.189.230.61';
 const RECOGNIZE_TIME = 3000;
@@ -56,7 +53,7 @@ class IVR {
   buildIVR() {}
 
   async startIVR(mode) {
-    if (mode=='stream') {
+    if (s_mode=='stream') {
       let r = await this.makeIVR_stream('step1',this.greet);
     } else if (mode=='file') {
       let r = await this.makeIVR_file('step1',this.greet);
@@ -129,10 +126,9 @@ class IVR {
     let ari = this.ari;
     let mode = this.mode;
 
-
-    function playback(ch,key,text) {
+    function playback(key,text) {
+      return new Promise(async (res,rej)=>{
       let uniq = new Date().getTime();
-      console.log('111111111111');
       obj = steps[key];
       obj.filename_tts = uniq +'_key_tts';
       obj.filename_asr = uniq+'_key_asr';
@@ -146,7 +142,7 @@ class IVR {
           play(ch,obj,key)
           .then(async (d)=>{
             console.log('2');
-            //
+            res();
           }).catch((e)=>{
             log.log(key,'Error play: '+e.message)
             ch.hangup();
@@ -162,16 +158,20 @@ class IVR {
         ch.hangup();
         process.exit(1)
       });
+    })
     }
 
-    function rec(ch,obj,key) {
+    function rec(obj,key) {
+      return new Promise(async (res,rej)=>{
       record(ch,obj,key)
+      .then((d)=>{
+        playback()
+      })
       .catch((e)=>{
         console.log(e);
       });
+    })
     }
-
-    playback(ch,key,text);
 
     async function prepare(obj,text) {
       return new Promise(async (res,rej)=>{

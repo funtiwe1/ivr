@@ -28,8 +28,13 @@ client.connect('http:\/\/' + IP_ASTERSERVER +':'+ PORT_ASTERSERVER  ,ARI_USERNAM
   ari.start(APPNAME);
   log.log('Started '+APPNAME+' app');
 
-  let mode = process.argv[2];
-  if (!mode) mode = 'stream';
+  let s_mode = process.argv[2];
+  if (!s_mode) s_mode = 'stream';
+  else s_mode = 'file';
+  log.log(s_mode);
+
+  let mode = process.argv[3];
+  if (!mode) mode = 'repeat';
   else mode = 'file';
   log.log(mode);
 
@@ -37,8 +42,8 @@ client.connect('http:\/\/' + IP_ASTERSERVER +':'+ PORT_ASTERSERVER  ,ARI_USERNAM
     let uniq = new Date().getTime();
     log.log('StasisStart',ch.id);
 
-    let ivr = new IVR(log,ch,ari);
-    ivr.startIVR(mode);
+    let ivr = new IVR(log,ch,ari,mode);
+    ivr.startIVR(s_mode);
 
     ch.once('StasisEnd', function (event, chan) {
       log.log('StasisEnd',ch.id);
