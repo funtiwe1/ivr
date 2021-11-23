@@ -24,8 +24,9 @@ class IVR {
   ari=null;
   bitrix=null;
   patch='\/var/spool\/asterisk\/recording\/';
+  appname = null;
 
-  constructor(log,ch,ari,demo,mode,greet,bitrix) {
+  constructor(log,ch,ari,demo,mode,greet,bitrix,appname) {
     if (demo) this.demo = demo;
     if (mode) this.mode = mode;
     if (greet) this.greet = greet;
@@ -33,6 +34,8 @@ class IVR {
     if (ch) this.ch = ch;
     if (ari) this.ari = ari;
     if (bitrix) this.bitrix = bitrix;
+    if (appname) this.appname = appname;
+
 
     if (bitrix) {
       let res = b24.requestb24('register',{number:this.number});
@@ -133,6 +136,7 @@ class IVR {
     let ch = this.ch;
     let ari = this.ari;
     let mode = this.mode;
+    let appname = appname.mode;
     let obj = null;
 
 playback(key,text)
@@ -275,7 +279,7 @@ playback(key,text)
           result_h = result;
         })
 
-        getRTP(ari,appname,rtpserver,port,ch)
+        getRTP(ari,appname,IP_RTPSERVER,port,ch)
         .then((d)=>{
           usrv = new udpserver.RtpUdpServerSocket(IP_RTPSERVER + ':' + port,recognizeStream);
         })

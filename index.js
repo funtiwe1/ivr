@@ -43,7 +43,7 @@ client.connect('http:\/\/' + IP_ASTERSERVER +':'+ PORT_ASTERSERVER  ,ARI_USERNAM
     log.log('StasisStart:'+ch.id);
 
     let bitrix = false;
-    let ivr = new IVR(log,ch,ari,'true',mode,'',bitrix);
+    let ivr = new IVR(log,ch,ari,'true',mode,'',bitrix,APPNAME);
     //log.log(ivr);
     ivr.startIVR(s_mode);
 
