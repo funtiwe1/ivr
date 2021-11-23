@@ -143,18 +143,16 @@ playback(key,text)
       let uniq = new Date().getTime();
       obj = steps[key];
       obj.filename_tts = uniq +'_key_tts';
-      obj.filename_asr = uniq+'_key_asr';
       let ret = prepare(obj,text)
       .then(async ()=>{
         log.log('Begin with text: '+obj.text);
-        log.log(obj.filename_asr+' '+obj.filename_tts);
+        log.log(obj.filename_tts);
         let ret2 = makeTTS(obj,key);
         ret2.then(async ()=>{
           log.log('Maked TTS audio');
           play(ch,obj,key)
           .then(async (d)=>{
-            console.log('2');
-            res();
+]            res();
           }).catch((e)=>{
             log.log('Error play: '+e.message)
             ch.hangup();
@@ -177,7 +175,10 @@ playback(key,text)
       return new Promise(async (res,rej)=>{
       record(ch,obj,key)
       .then((d)=>{
-        playback()
+        log.log(d);
+
+        // for repeat
+        playback('step1',d)
       })
       .catch((e)=>{
         console.log(e);
@@ -229,9 +230,6 @@ playback(key,text)
     function   record(ch,obj,key) {
       return new Promise((res,rej)=>{
         console.log('Started record');
-        let wch = ari.Channel();
-        let lch = ari.Channel();
-        let bridje = ari.Bridge();
         let recognizeStream = null;
         let result = null;
         let client = new speech_g.SpeechClient();
@@ -271,69 +269,16 @@ playback(key,text)
               playback(ch,'step1',result_h);
 
             }
-          },3000);
+          },2000);
           result_h = result;
         })
 
-        bridje.create({type: 'mixing'}).then(function(br){
-          console.log('Create bridge: %s', br.id);
-          lch.originate({
-            endpoint: 'Local/12345@from-internal',
-            app: 'ivr',
-            variables: {}
-          }).then(function(channel){
-            console.log('Created lch channel: %s', lch.id);
-            let external_host = IP_RTPSERVER + ':' + port;
-            console.log('RTP server: %s', external_host);
-            wch.externalMedia({
-              app: 'ivr',
-              external_host: external_host,
-              format: 'slin16'
-            }).then(function(){
-              console.log('Create WS Channel: %s', wch.id);
-            }).catch(function(err){
-              console.log('Error make WS originate %O', err);
-              throw err
-            });
-          }).catch(function(err){
-            console.log('Error make Local originate %O', err);
-            throw err
-          });
-        }).catch(function(err){
-          console.log('Error create bridge %O', err);
-          throw err
-        });
-
-        lch.on('StasisStart', function (event, chan) {
-          console.log('StasisStart lch channel id/name: %s / %s', lch.id, lch.name);
-          chan.mute({direction: 'both'});
-          bridje.addChannel({channel: [lch.id]}).then(function(){
-            console.log('Added lch channel to bridge: %O / %O', lch.id, lch.name);
-          }).catch(function(){
-            console.log('Error add lch channel in bridge %O', err);
-            throw err
-          })
+        getRTP(ari,appname,rtpserver,port,ch)
+        .then((d)=>{
+          usrv = new udpserver.RtpUdpServerSocket(IP_RTPSERVER + ':' + port,recognizeStream);
         })
-
-        wch.on('StasisStart', function (event, chan) {
-          console.log('StasisStart wschannel id/name: %s / %s', wch.id, wch.name);
-          bridje.addChannel({channel: wch.id}).then(function(){
-            console.log('Added wch channel in bridge: %O / %O', wch.id, wch.name);
-
-            bridje.addChannel({channel: ch.id}).then(function(){
-              //let recording = outgoing.LiveRecording(outgoing, {name: './111.wav'});
-              //outgoing.record({name: recording.name, format: 'wav', beep: true, ifExists: 'overwrite'});
-              console.log('Added client channel to bridge: %s / %s', ch.id, ch.name);
-              usrv = new udpserver.RtpUdpServerSocket(IP_RTPSERVER + ':' + port,recognizeStream);
-              //let date_answer = getDate(new Date());
-            }).catch(function(err){
-              console.log('Error add client channel in bridge %O', err);
-              throw err
-            })
-          }).catch(function(e){
-            console.log('Error add wch chanel in bridge %O', e);
-            throw e
-          })
+        .catch((e)=>{
+          log.log('Error');
         })
 
         let f_talkfinish = false;
@@ -378,7 +323,7 @@ playback(key,text)
           }
           //res(result);
           //res(result);//.then(async ()=>{await asr});
-        },10000);
+        },5000);
 
         ch.on('ChannelTalkingStarted',(ev,ch)=>{
           if (f_talkstart) return;
