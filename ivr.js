@@ -236,6 +236,7 @@ class IVR {
     }
 
 function asr_s(ari,appname,IP_RTPSERVER,port,ch) {
+  return new Promise(async (res,rej)=>{
   let recognizeStream = null;
   let result = null;
   let client = new speech_g.SpeechClient();
@@ -288,6 +289,7 @@ function asr_s(ari,appname,IP_RTPSERVER,port,ch) {
     f_talkstart = true;
     log.log(key,'Start talk - ChannelTalkingStarted');
   });
+  })
 }
     function   record(obj,key) {
       return new Promise((res,rej)=>{
