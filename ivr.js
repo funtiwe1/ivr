@@ -256,7 +256,6 @@ playback(key,text)
         };
 
         let t = null;
-        let t2 = null;
 
         let port = curport++;
         recognizeStream = client
@@ -265,22 +264,15 @@ playback(key,text)
         .on('data', data => {
           result = data.results[0].alternatives[0].transcript;
           console.log('HUMAN: %O\n%O', result,result_h);
-
-          t = setTimeout(()=>{
-            console.log('timer');
-            console.log(result,result_h);
-            if (result==result_h) {
-              clearTimeout(t2);
-              clearTimeout(t);
-              playback('step1',result_h);
-
-            }
-          },2000);
-          result_h = result;
         })
 
         getRTP(ari,appname,IP_RTPSERVER,port,ch)
         .then((d)=>{
+          t = setTimeout(()=>{
+            console.log('timer');
+            playback('step1',result);
+          },3000);
+          result_h = result;
           usrv = new udpserver.RtpUdpServerSocket(IP_RTPSERVER + ':' + port,recognizeStream);
         })
         .catch((e)=>{
@@ -289,47 +281,6 @@ playback(key,text)
 
         let f_talkfinish = false;
         let f_talkstart = false;
-        //    ch.on('ChannelTalkingFinished',(ev,ch)=>{
-        t2 = setTimeout(()=>{
-
-          recognizeStream.end();
-          recognizeStream = null;
-          usrv.close();
-          clearTimeout(t);
-          f_talkfinish = true;
-          log.log(key,'Finished record - ChannelTalkingFinished');
-          console.log(result);
-          obj.text_next = result;
-          // lch.hangup().catch(()=>{console.log('Error hangup lch channel')});
-          // wch.hangup().catch(()=>{console.log('Error hangup wch channel')});
-          //bridje.destroy().catch(()=>{console.log('Error hangup bridje channel')});
-          log.log(key, 'ASR text: ' + obj.text_next);
-
-          let next = obj.next;
-          if (mode!='repeat') {
-            if  (obj.text_next && obj.answers) {
-              for(let key in obj.answers) {
-                let r = obj.answers[key];
-                console.log(r.text);
-                console.log(obj.text_next);
-                if (obj.text_next.indexOf(r.text)!=-1) next = r.next;
-              }
-              obj.text_next = '';
-            }
-          } else {
-            next = 'step1';
-          }
-          log.log(key, 'Next step: ' + next+'\n');
-
-
-          if (next) playback(ch,next,obj.text_next)
-          else  {
-            console.log('End');
-            return;
-          }
-          //res(result);
-          //res(result);//.then(async ()=>{await asr});
-        },5000);
 
         ch.on('ChannelTalkingStarted',(ev,ch)=>{
           if (f_talkstart) return;
