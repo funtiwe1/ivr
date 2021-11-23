@@ -119,7 +119,7 @@ class IVR {
   async makeIVR_stream(key,text) {
     if (!key) return;
 
-    //console.log(this);
+    console.log(this);
     let steps = this.steps;
     let log = this.log;
     let ch = this.ch;

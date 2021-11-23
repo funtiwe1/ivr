@@ -43,6 +43,7 @@ client.connect('http:\/\/' + IP_ASTERSERVER +':'+ PORT_ASTERSERVER  ,ARI_USERNAM
     log.log('StasisStart:'+ch.id);
 
     let ivr = new IVR(log,ch,ari,mode);
+    log.log(ivr);
     ivr.startIVR(s_mode);
 
     ch.once('StasisEnd', function (event, chan) {
