@@ -215,14 +215,14 @@ playback(key,text)
         .then(async ()=>{
           playback.on('PlaybackFinished',async ()=>{
             log.log('Finished play');
-            if (!obj.next) await ch.hangup();
-            else rec(ch,obj,key);
+            res();
+            // if (!obj.next) await ch.hangup();
+            // else rec(ch,obj,key);
           });
           log.log('Started play');
         }).catch((e)=>{
           throw new Error(e.message);
         });
-        console.log('1');
       })
     }
 
