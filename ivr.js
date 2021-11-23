@@ -292,7 +292,7 @@ function asr_s(ari,appname,IP_RTPSERVER,port,ch) {
     function   record(obj,key) {
       return new Promise((res,rej)=>{
         console.log('Started record');
-        asr_s(ari,appname,IP_RTPSERVER,curport++,ch);
+        asr_s(ari,appname,IP_RTPSERVER,curport++,ch)
         .then((d)=>{
           res(d);
         });
