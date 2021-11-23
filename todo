@@ -1,0 +1,10 @@
+1. catchall
+2. run on life number
+3. make load file
+4. make changemode and stop functions
+5. make stop in RtpUdpServer
+6. make npm packet for speech
+7. draw error scxema
+8. resolve bitrix Error
+9. make readme with cmd line options
+10. make docker images
