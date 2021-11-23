@@ -20,6 +20,7 @@ class IVR {
   log = null;
   ch = null;
   ari=null;
+  bitrix=null;
   patch='\/var/spool\/asterisk\/recording\/';
 
   constructor(log,ch,ari,demo,mode,greet) {
@@ -29,28 +30,33 @@ class IVR {
     if (log) this.log = log;
     if (ch) this.ch = ch;
     if (ari) this.ari = ari;
+    if (bitrix) this.bitrix = bitrix;
 
-    let res = b24.requestb24('register',{number:this.number});
-    if (!res) {
-      log.log('Prepare: ','Error register');
-      ch.hangup();
+    if (bitrix) {
+      let res = b24.requestb24('register',{number:this.number});
+      if (!res) {
+        log.log('Prepare: ','Error register');
+        ch.hangup();
+      }
+      log.log('Prepare: Bitrix lead ID: '+res.ID);
+
+      if (res.CRM_ENTITY_ID) {
+        //ret = b24.requestb24('crm.'+strtolow(res.CRM_ENTITY_TYPE)+'.get',{number:number});
+        let ret = b24.requestb24('crm.contact.get',{entity_id:res.CRM_ENTITY_ID});
+        if (ret) {
+          res.NAME = ret.NAME;
+          res.SECOND_NAME = ret.SECOND_NAME;
+        } else log.log('Prepare: Bitrix lead name: '+res.NAME+' '+res.SECOND_NAME);
+      } else log.log('Prepare: Error get crm info');
     }
-    log.log('Prepare: Bitrix lead ID: '+res.ID);
-
-    if (res.CRM_ENTITY_ID) {
-      //ret = b24.requestb24('crm.'+strtolow(res.CRM_ENTITY_TYPE)+'.get',{number:number});
-      let ret = b24.requestb24('crm.contact.get',{entity_id:res.CRM_ENTITY_ID});
-      if (ret) {
-        res.NAME = ret.NAME;
-        res.SECOND_NAME = ret.SECOND_NAME;
-      } else log.log('Prepare: Bitrix lead name: '+res.NAME+' '+res.SECOND_NAME);
-    } else log.log('Prepare: Error get crm info');
 
     if (this.demo) this.exampleIVR()
     else this.buildIVR();
   }
 
-  buildIVR() {}
+  buildIVR() {
+
+  }
 
   async startIVR(mode) {
     if (mode=='stream') {
@@ -125,8 +131,12 @@ class IVR {
     let ch = this.ch;
     let ari = this.ari;
     let mode = this.mode;
+    let obj = null;
 
-playback();
+playback()
+.then((d)=>{
+  rec();
+})
 
     function playback(key,text) {
       return new Promise(async (res,rej)=>{
