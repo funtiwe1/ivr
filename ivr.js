@@ -198,7 +198,7 @@ class IVR {
       return new Promise(async (res,rej)=>{
         if (text) obj.text = text;
         if (obj.text) res();
-        else rej();
+        else rej('No text');
       })
     }
 
