@@ -163,18 +163,10 @@ class IVR {
           play(ch,obj,key)
           .then(async (d)=>{
             res();
-          }).catch((e)=>{
-            log.log('Error play: '+e)
-            ch.hangup();
-            process.exit(1)
           })
-        }).catch((e)=>{
-          log.log('Error make TTS: '+e)
-          ch.hangup();
-          process.exit(1)
         })
       }).catch((e)=>{
-        log.log('Error prepare: '+e)
+        log.log('Error playback: '+e)
         ch.hangup();
         process.exit(1)
       });
@@ -189,7 +181,9 @@ class IVR {
         res();
       })
       .catch((e)=>{
-        console.log(e);
+        log.log('Error record: '+e)
+        ch.hangup();
+        process.exit(1)
       });
     })
     }
@@ -208,10 +202,10 @@ class IVR {
         let audio = speech.tts_f(obj.text,obj.filename_tts)
         .then(()=>{
           if (audio) res(audio);
-          else rej(new Error('Get empty audio file from TTS'));
+          else rej('Get empty audio file from TTS');
         }).catch((e)=>{
           //throw new Error(e);
-          rej(new Error(e));
+          rej('Error makeTTS');
         });
       });
     }
@@ -230,7 +224,7 @@ class IVR {
           });
           log.log('Started play');
         }).catch((e)=>{
-          throw new Error(e);
+          rej('Error play');
         });
       })
     }
