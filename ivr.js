@@ -139,7 +139,7 @@ class IVR {
     let obj = null;
 
     while(steps[key].next) {
-      await playback(key,text);
+      await playback(key,this.text);
       let text = await record();
       if (mode == 'repeat') {
         steps[key].next = 'step1';
