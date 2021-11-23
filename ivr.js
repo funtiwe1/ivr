@@ -53,7 +53,7 @@ class IVR {
   buildIVR() {}
 
   async startIVR(mode) {
-    if (s_mode=='stream') {
+    if (mode=='stream') {
       let r = await this.makeIVR_stream('step1',this.greet);
     } else if (mode=='file') {
       let r = await this.makeIVR_file('step1',this.greet);
