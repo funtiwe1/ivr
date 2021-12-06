@@ -23,7 +23,7 @@ const options = {
 app.get('/',(req,res)=>res.send('ok'));
 
 app.post('/ajax',(req,res)=>{
-  console.log(req.body.number);
+  //console.log(req.body.number);
   makecall(req.body.number);
   res.send('get');
 });

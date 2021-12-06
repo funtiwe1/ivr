@@ -16,6 +16,7 @@ const ARI_PASS = '57d5cf235bc84181cb101335ce689eba';
 //const IP_ASTERSERVER = 'pbx.informunity.ru';
 
 function makecall(number) {
+  console.log(number);
   client.connect('http:\/\/' + IP_ASTERSERVER +':'+ PORT_ASTERSERVER  ,ARI_USERNAME , ARI_PASS,function (err, ari) {
     //client.connect('http:\/\/' + IP_ASTERSERVER + ':8088', 'amd', '57d5cf235bc84181cb101335ce689eba',function (err, ari) {
     let log = new Log('ivr.log');
