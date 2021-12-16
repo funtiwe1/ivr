@@ -270,7 +270,7 @@ function asr_s(ari,appname,IP_RTPSERVER,port,ch) {
       recognizeStream=null;
       usrv=null;
       res(result);
-    },3000);
+    },4000);
     result_h = result;
   })
   .catch((e)=>{
