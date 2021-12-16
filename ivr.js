@@ -260,6 +260,7 @@ function asr_s(ari,appname,IP_RTPSERVER,port,ch) {
     console.log('HUMAN: %O\n%O', result,result_h);
   })
 
+try {
   getRTP(ari,appname,IP_RTPSERVER,port,ch)
   .then((d)=>{
     usrv = new udpserver.RtpUdpServerSocket(IP_RTPSERVER + ':' + port,recognizeStream);
@@ -276,6 +277,9 @@ function asr_s(ari,appname,IP_RTPSERVER,port,ch) {
   .catch((e)=>{
     log.log('Error');
   })
+} catch(e) {
+  log.log('Error:'+e.message);
+}
 
   let f_talkfinish = false;
   let f_talkstart = false;
