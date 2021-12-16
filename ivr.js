@@ -262,14 +262,16 @@ function asr_s(ari,appname,IP_RTPSERVER,port,ch) {
 
   getRTP(ari,appname,IP_RTPSERVER,port,ch)
   .then((d)=>{
+    usrv = new udpserver.RtpUdpServerSocket(IP_RTPSERVER + ':' + port,recognizeStream);
     t = setTimeout(()=>{
       console.log('timer');
       usrv.close();
       recognizeStream.end();
+      recognizeStream=null;
+      usrv=null;
       res(result);
     },3000);
     result_h = result;
-    usrv = new udpserver.RtpUdpServerSocket(IP_RTPSERVER + ':' + port,recognizeStream);
   })
   .catch((e)=>{
     log.log('Error');
