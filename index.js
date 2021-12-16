@@ -19,7 +19,7 @@ function makecall(number) {
   console.log(number);
   client.connect('http:\/\/' + IP_ASTERSERVER +':'+ PORT_ASTERSERVER  ,ARI_USERNAME , ARI_PASS,function (err, ari) {
     //client.connect('http:\/\/' + IP_ASTERSERVER + ':8088', 'amd', '57d5cf235bc84181cb101335ce689eba',function (err, ari) {
-    let log = new Log('ivr.log');
+    let log = new Log(APPNAME+'.log');
     if (err) {
       log.log('Error connect asterisk ari')
       log.log(err.message);

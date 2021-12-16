@@ -1,8 +1,0 @@
-FROM node
-     RUN curl -O https://rpm.nodesource.com/setup_lts.x
-     RUN mkdir -p /root/ivr
-     ADD ivr /root/ivr
-     RUN chmod +x /root/ivr/index.js
-     EXPOSE 80
-     EXPOSE 443
-     EXPOSE 3306
