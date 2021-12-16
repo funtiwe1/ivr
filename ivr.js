@@ -264,7 +264,7 @@ function asr_s(ari,appname,IP_RTPSERVER,port,ch) {
   .then((d)=>{
     t = setTimeout(()=>{
       console.log('timer');
-      //usrv.stop();
+      usrv.close();
       recognizeStream.end();
       res(result);
     },3000);
