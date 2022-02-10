@@ -42,7 +42,7 @@ function makecall(number) {
     log.log(mode);
 
     outgoing.originate({
-        endpoint:'SIP/sipnet/'+number,
+        endpoint:'SIP/inbound_sipp/'+number,
         app:APPNAME,
         appArgs:''
       }).then(function(channel){
