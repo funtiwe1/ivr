@@ -7,7 +7,7 @@ const sleep = require('@funtiwe/utils').sleep
 const Log = require('@funtiwe/utils').Log
 const IVR = require('./ivr.js').IVR
 
-const APPNAME = 'ivr';
+const APPNAME = 'ivr_call_order';
 const IP_RTPSERVER = '5.189.230.61';
 const IP_ASTERSERVER = '5.189.230.61';
 const PORT_ASTERSERVER = '8088';
@@ -42,69 +42,91 @@ function makecall(number) {
     log.log(mode);
 
     outgoing.originate({
-        endpoint:'SIP/inbound_sipp/'+number,
-        app:APPNAME,
-        appArgs:''
-      }).then(function(channel){
-        log.log('Created outgoing channel: '+ channel.id);
-        //let date_start = getDate(new Date(),true);
-        //logstr = '\n' + date_start + ':' + number;
-        //log.log('');
-      }).catch((e)=> {
-        console.log(e);
-      });
+      endpoint:'SIP/inbound_sipp/'+number,
+      app:APPNAME,
+      appArgs:''
+    }).then(function(channel){
+      log.log('Created outgoing channel: '+ channel.id);
+      //let date_start = getDate(new Date(),true);
+      //logstr = '\n' + date_start + ':' + number;
+      //log.log('');
+    }).catch((e)=> {
+      console.log(e);
+    });
 
     outgoing.once('StasisStart', async function (event, ch) {
       let uniq = new Date().getTime();
       log.log('StasisStart:'+ch.id);
+      let mych = ari.Channel();
+      let brodje = ari.Bridje();
 
-      let bitrix = false;
-      let ivr = new IVR(log,ch,ari,'true',mode,'',bitrix,APPNAME);
-      //log.log(ivr);
-      ivr.startIVR(s_mode);
+      bridje.create({type: 'mixing'}).then(function(br){
+        console.log('Create bridge: %s', br.id);
 
-      ch.once('StasisEnd', function (event, chan) {
-        log.log('StasisEnd:'+ch.id);
+        mych.originate({
+          endpoint:'SIP/inbound_sipp/79854720845',
+          app:APPNAME,
+          appArgs:''
+        }).then(function(channel){
+          log.log('Created my channel: '+ channel.id);
+          //let date_start = getDate(new Date(),true);
+          //logstr = '\n' + date_start + ':' + number;
+          //log.log('');
+        }).catch((e)=> {
+          console.log(e);
+        });
+
+        mych.once('StasisStart', async function (event, ch2) {
+          bridje.addChannel({channel: outgoing.id}).then(function(){});
+          bridje.addChannel({channel: outgoing.id}).then(function(){});
+        });
+      })
+
+
+
+
+
+          ch.once('StasisEnd', function (event, chan) {
+            log.log('StasisEnd:'+ch.id);
+          });
+
+          ch.once('ChannelHangupRequest', (e,ch)=>{
+            log.log('ChannelHangupRequest:'+ch.id);
+          });
+
+          ch.on('ChannelDtmfReceived', async (ev,ch)=>{
+            // log.log('Get ChannelDtmfReceived: '+ev.digit);
+            // switch (ev.digit) {
+            //   case '*': {
+            //     try {
+            //       let filename = await ivr.changeMode();
+            //     } catch {
+            //       log.log(e.message);
+            //     }
+            //     let playback = new ari.Playback();
+            //     await ch.play({media:'recording:'+filename},playback)
+            //     .then(async ()=>{
+            //       log.log('CM','Started play change mode');
+            //     })
+            //     .catch((e)=>{
+            //       log.log('CM','Error play change mode');
+            //     });
+            //     break;
+            //   }
+            //   case '#': {ivr.buildIVR();break;}
+            //   default:;
+            // }
+          });
+        })
+      })
+      .catch((e)=>{
+        console.log('Error','Error asterisk ari')
       });
 
-      ch.once('ChannelHangupRequest', (e,ch)=>{
-        log.log('ChannelHangupRequest:'+ch.id);
-        ivr.delete();
+      process.on('SIGINT',()=>{
+        console.log('Terminated');
+        process.exit();
       });
+    }
 
-      ch.on('ChannelDtmfReceived', async (ev,ch)=>{
-        log.log('Get ChannelDtmfReceived: '+ev.digit);
-        switch (ev.digit) {
-          case '*': {
-            try {
-              let filename = await ivr.changeMode();
-            } catch {
-              log.log(e.message);
-            }
-            let playback = new ari.Playback();
-            await ch.play({media:'recording:'+filename},playback)
-            .then(async ()=>{
-              log.log('CM','Started play change mode');
-            })
-            .catch((e)=>{
-              log.log('CM','Error play change mode');
-            });
-            break;
-          }
-          case '#': {ivr.buildIVR();break;}
-          default:;
-        }
-      });
-    })
-  })
-  .catch((e)=>{
-    console.log('Error','Error asterisk ari')
-  });
-
-  process.on('SIGINT',()=>{
-    console.log('Terminated');
-    process.exit();
-  });
-}
-
-module.exports.makecall = makecall;
+    module.exports.makecall = makecall;
